@@ -167,7 +167,7 @@ public partial class VRCSdkControlPanel : EditorWindow
         }
 
         if (_bannerImage == null)
-            _bannerImage = Resources.Load<Texture2D>("SDK_Panel_Banner");
+            _bannerImage = Resources.Load<Texture2D>("nanoSdkBanner");
 
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();

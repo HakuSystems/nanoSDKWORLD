@@ -10,6 +10,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using nanoSDKHash;
+using UnityEditor.SceneManagement;
 
 namespace nanoSDK.Premium
 {
@@ -58,24 +59,24 @@ namespace nanoSDK.Premium
             GUILayout.Label(
 @"nanoLoader is a new feature that gives you control over
 your asset bundles(.vrca files). 
-Drag and drop your assetbundle into nanoLoader and it will load your avatar in
-Unity with all of the shaders and everything else that your avatar has. 
-This avatar can be seen in edit and play mode. 
+Drag and drop your assetbundle into nanoLoader and it will load your World in
+Unity with all of the shaders and everything else that your World has. 
+This World can be seen in edit and play mode. 
 The assets (specific files like soundfiles, meshes, or shaders) cannot be restored! 
 This feature only gives you the ability to see
-the avatar and how it was previously built in Unity. 
-For example, you can use it to copy your lost avatar
-settings and then paste the same settings onto your new avatar. 
+the World and how it was previously built in Unity. 
+For example, you can use it to copy your lost World
+settings and then paste the same settings onto your new World. 
 For example, if you have forgotten what shader you
-used on the old avatar, you can simply drag and drop your assetbundle
+used on the old World, you can simply drag and drop your assetbundle
 into nanoLoader and you will be able to see
 all of the shaders and all of the animations. 
-You can also play every single animation that the avatar has.
+You can also play every single animation that the World has.
 Like I mentioned before, assets will not be exported.", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            GUILayout.Label("Drag and drop your avatar.vrca file here.");
+            GUILayout.Label("Drag and drop your world.vrcw file here.");
             GUILayout.Space(60);
-            GUILayout.Label("Note: this feature is only for avatars it isnt for Worlds!");
+            GUILayout.Label("Note: this feature is only for Worlds it isnt for Avatars!");
             if (Event.current.type == EventType.DragUpdated)
             {
                 DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
@@ -89,29 +90,36 @@ Like I mentioned before, assets will not be exported.", EditorStyles.boldLabel);
                     foreach (string path in DragAndDrop.paths)
                     {
                         UnityEngine.Debug.Log("- " + path);
-                        if (path.EndsWith(".vrca"))
+                        if (path.EndsWith(".vrcw"))
                         {
-                            try
+                            _bundle = AssetBundle.LoadFromFile(path);
+
+                            if (_bundle.isStreamedSceneAssetBundle)
                             {
-                                if (_bundle)
+                                try
                                 {
-                                    _bundle.Unload(false);
-                                    Destroy(_object);
+                                    string[] scenePaths = _bundle.GetAllScenePaths();
+                                    string sceneName = Path.GetFileNameWithoutExtension(scenePaths[0]);
+
+                                    if (EditorApplication.isPlaying)
+                                    {
+                                        SceneManager.LoadScene(sceneName);
+                                    }
+                                    else
+                                    {
+                                        EditorUtility.DisplayDialog("Error", "You have to be in Playmode!", "Okay");
+                                        _bundle.Unload(true);
+                                    }
                                 }
-                                _bundle = AssetBundle.LoadFromFile(path);
-                                foreach (UnityEngine.Object obj in _bundle.LoadAllAssets())
+                                catch
                                 {
-                                    _object = (GameObject)Instantiate(obj);
+                                    _bundle.Unload(true);
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                EditorUtility.DisplayDialog("nanoLoader", ex.Message, "Okay");
                             }
                         }
                         else
                         {
-                            EditorUtility.DisplayDialog("nanoLoader", "Sorry but this is not a Avatar", "Okay");
+                            EditorUtility.DisplayDialog("nanoLoader", "Sorry but this is not a World", "Okay");
                         }
                     }
                 }

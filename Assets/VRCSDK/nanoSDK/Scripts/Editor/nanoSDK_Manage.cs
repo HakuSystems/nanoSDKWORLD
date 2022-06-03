@@ -45,7 +45,6 @@ namespace nanoSDK
 
         //Migrated from settings
         public static string projectConfigPath = "Assets/VRCSDK/nanoSDK/Configs/";
-        private readonly string backgroundConfig = "BackgroundVideo.txt";
         private static readonly string projectDownloadPath = "Assets/VRCSDK/nanoSDK/Assets/";
 
         //Migrated from Importables
@@ -74,11 +73,6 @@ namespace nanoSDK
                 EditorPrefs.SetBool("nanoSDK_discordRPC", true);
             }
 
-            if (!File.Exists(projectConfigPath + backgroundConfig) || !EditorPrefs.HasKey("nanoSDK_background"))
-            {
-                EditorPrefs.SetBool("nanoSDK_background", false);
-                File.WriteAllText(projectConfigPath + backgroundConfig, "False");
-            }
 
             NanoSDK_ImportManager.CheckForConfigUpdate();
             LoadJson();
@@ -140,9 +134,7 @@ namespace nanoSDK
                 {
                     //Version selctor mit foreach loop maybe (todoo)
                     GenericMenu menu = new GenericMenu();
-                    menu.AddItem(new GUIContent("(Latest) Stable "+ versionList[0].Version), false, HandleVersionItemClickedAsync, 1);
-                    menu.AddItem(new GUIContent("(Latest) Beta " + versionList[versionList.Count -1].Version), false, HandleVersionItemClickedAsync, 2);
-                    menu.AddItem(new GUIContent("(Others)"), false, HandleVersionItemClickedAsync, 3);
+                    menu.AddItem(new GUIContent("(Others)"), false, HandleVersionItemClickedAsync, 1);
                     menu.DropDown(new Rect(10, 755, 105, 20));
                 }
 
@@ -234,19 +226,7 @@ namespace nanoSDK
         {
             switch (item)
             {
-                case 1: //Release
-                    if (EditorUtility.DisplayDialog("Release", "Do you want to download the latest Release Version?", "OK", "Cancel"))
-                    {
-                        NanoSDK_AutomaticUpdateAndInstall.DeleteAndDownloadAsync("latest");
-                    }
-                    break;
-                case 2: //Beta
-                    if (EditorUtility.DisplayDialog("Beta", "Do you want to download the latest Beta Version?", "OK", "Cancel"))
-                    {
-                       NanoSDK_AutomaticUpdateAndInstall.DeleteAndDownloadAsync("beta");
-                    }
-                    break;
-                case 3: //Others
+                case 1: //Others
                     NanoSDKOtherVersions window = (NanoSDKOtherVersions)EditorWindow.GetWindow(typeof(NanoSDKOtherVersions));
                     window.Show();
 
@@ -399,13 +379,7 @@ namespace nanoSDK
                 GUILayout.Space(4);
                 GUI.Label(new Rect(580, 215, 200, 20), "Upload panel:");
                 GUILayout.BeginHorizontal();
-                var isBackgroundEnabled = EditorPrefs.GetBool("nanoSDK_background", false);
-                var enableBackground = EditorGUI.ToggleLeft(new Rect(560, 235, 200, 20), "Custom background", isBackgroundEnabled);
-                if (enableBackground != isBackgroundEnabled)
-                {
-                    EditorPrefs.SetBool("nanoSDK_background", enableBackground);
-                    File.WriteAllText(projectConfigPath + backgroundConfig, enableBackground.ToString());
-                }
+                EditorGUI.LabelField(new Rect(560, 235, 250, 20),"Background Video Removed for World SDK");
 
                 GUILayout.EndHorizontal();
 
@@ -521,7 +495,7 @@ namespace nanoSDK
         private void ReadChangelogs()
         {
             NanoLog("Loaded Changelogs!");
-            string url = "https://nanosdk.net/download/changelogs/logs.txt";
+            string url = "https://nanosdk.net/download/changelogs/Worldlogs.txt";
             using (var client = new WebClient())
             {
                 var webData = client.DownloadString(url);
