@@ -1,0 +1,69 @@
+{
+	"config": {
+		"serverUrl": "https://nanoSDK.net/assets/",
+		"window": {
+			"sizeX": 400,
+			"sizeY": 700
+		}
+	},
+	"assets": {
+		"editorToolsSpacer": {
+			"name": "Editor Tools"
+		},
+		"reroEditorScripts": {
+			"name": "Rero Editor Scripts",
+			"file": "ReroEditorScripts.unitypackage"
+		},
+		"bitAnimator": {
+			"name": "Bit Animator V1.3.2",
+			"file": "BitAnimator.unitypackage"
+		},
+		"muscleAnimator": {
+			"name": "Muscle Animator V2.4",
+			"file": "MuscleAnimator.unitypackage"
+		},
+		"xsInvSystem": {
+			"name": "XS Inventory System (Emote toggles)",
+			"file": "XSInventorySystem.unitypackage"
+		},
+		"khodrinDynUtils": {
+			"name": "Khodrins Dynamic Bone Tools 2.2",
+			"file": "KhodrinsDynamicBoneTools2.2.unitypackage"
+		},
+		"prefabsSpacer": {
+			"name": "Prefabs"
+		},
+		"nanoSDK_shaderSphere": {
+			"name": "Particle Shader Sphere",
+			"file": "nanoSDKParticleShaderSpherePrefab.unitypackage"
+		},
+		"nanoSDK_worldAudioPrefab": {
+			"name": "World Audio Prefab",
+			"file": "nanoSDKWorldAudioPrefab.unitypackage"
+		},
+		"worldFixedIk": {
+			"name": "World Fixed IK (Requires Final IK 1.7)",
+			"file": "WorldFixedIK.unitypackage"
+		},
+		"shaderSpacer": {
+			"name": "Shader"
+		},
+		"poiyomiToon": {
+			"name": "PoiyomiToon7.3.050",
+			"file": "PoiyomiToon.unitypackage"
+		},
+		"doppelsMetallicFX": {
+			"name": "Doppelganger MetallicFX V6.01",
+			"file": "DoppelgangerMetallicFX.unitypackage"
+		},
+		"uberShader": {
+			"name": "Leviant ScreenSpace Ubershader V2.9",
+			"file": "LeviantUbershader.unitypackage"
+		},
+		"reroStandardShader": {
+			"name": "reroStandard 1.0.8a",
+			"file": "ReroStandard.unitypackage"
+		}
+
+	}
+}

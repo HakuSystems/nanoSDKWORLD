@@ -221,17 +221,6 @@ public partial class VRCSdkControlPanel : EditorWindow
         GUILayout.FlexibleSpace();
         GUILayout.BeginVertical();
         
-        if (VRC.Core.ConfigManager.RemoteConfig.IsInitialized())
-        {
-            string sdkUnityVersion = VRC.Core.ConfigManager.RemoteConfig.GetString("sdkUnityVersion");
-            if (Application.unityVersion != sdkUnityVersion)
-            {
-                OnGUIWarning(null, "You are not using the recommended Unity version for the VRChat SDK. Content built with this version may not work correctly. Please use Unity " + sdkUnityVersion,
-                    null,
-                    () => { Application.OpenURL("https://unity3d.com/get-unity/download/archive"); }
-                );
-            }
-        }
         
         if (VRCSdk3Analysis.IsSdkDllActive(VRCSdk3Analysis.SdkVersion.VRCSDK2) && VRCSdk3Analysis.IsSdkDllActive(VRCSdk3Analysis.SdkVersion.VRCSDK3))
         {
@@ -639,17 +628,6 @@ public partial class VRCSdkControlPanel : EditorWindow
         {
             VRC.Core.ConfigManager.RemoteConfig.Init(() => ShowContentPublishPermissionsDialog());
             return;
-        }
-
-        string message = VRC.Core.ConfigManager.RemoteConfig.GetString("sdkNotAllowedToPublishMessage");
-        int result = UnityEditor.EditorUtility.DisplayDialogComplex("VRChat SDK", message, "Developer FAQ", "VRChat Discord", "OK");
-        if (result == 0)
-        {
-            ShowDeveloperFAQ();
-        }
-        if (result == 1)
-        {
-            ShowVRChatDiscord();
         }
     }
 }

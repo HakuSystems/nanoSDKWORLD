@@ -114,25 +114,6 @@ public partial class VRCSdkControlPanel : EditorWindow
                 UnityEditor.EditorPrefs.SetBool("allLoggingEnabled", false);
         }
 
-        // Future proof upload
-        {
-            EditorGUILayout.Separator();
-            EditorGUILayout.BeginVertical(boxGuiStyle);
-
-            EditorGUILayout.LabelField("Publish", EditorStyles.boldLabel);
-            bool futureProofPublish = UnityEditor.EditorPrefs.GetBool("futureProofPublish", DefaultFutureProofPublishEnabled);
-
-            futureProofPublish = EditorGUILayout.ToggleLeft("Future Proof Publish", futureProofPublish);
-
-            if (UnityEditor.EditorPrefs.GetBool("futureProofPublish", DefaultFutureProofPublishEnabled) != futureProofPublish)
-            {
-                UnityEditor.EditorPrefs.SetBool("futureProofPublish", futureProofPublish);
-            }
-            EditorGUILayout.LabelField("Client Version Date", clientVersionDate);
-            EditorGUILayout.LabelField("SDK Version Date", sdkVersionDate);
-
-            EditorGUILayout.EndVertical();
-        }
 
 
         if (APIUser.CurrentUser != null)

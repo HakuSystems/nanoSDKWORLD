@@ -225,7 +225,7 @@ namespace VRC.SDK3.Editor
                     if (Core.APIUser.CurrentUser.canPublishWorlds)
                     {
                         EditorPrefs.SetBool("VRC.SDKBase_StripAllShaders", false);
-                        VRC_SdkBuilder.shouldBuildUnityPackage = VRCSdkControlPanel.FutureProofPublishEnabled;
+                        VRC_SdkBuilder.shouldBuildUnityPackage = false;
                         VRC_SdkBuilder.UploadLastExportedSceneBlueprint();
                     }
                     else
@@ -247,7 +247,7 @@ namespace VRC.SDK3.Editor
                         EnvConfig.ConfigurePlayerSettings();
                         EditorPrefs.SetBool("VRC.SDKBase_StripAllShaders", false);
                         
-                        VRC_SdkBuilder.shouldBuildUnityPackage = VRCSdkControlPanel.FutureProofPublishEnabled;
+                        VRC_SdkBuilder.shouldBuildUnityPackage = false;
                         VRC_SdkBuilder.PreBuildBehaviourPackaging();
                         VRC_SdkBuilder.ExportAndUploadSceneBlueprint();
                     }

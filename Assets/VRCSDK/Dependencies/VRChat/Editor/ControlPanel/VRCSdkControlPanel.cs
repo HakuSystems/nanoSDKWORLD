@@ -9,7 +9,7 @@ public partial class VRCSdkControlPanel : EditorWindow
 {
     public static VRCSdkControlPanel window;
 
-    [MenuItem("VRChat SDK/Show Control Panel", false, 600)]
+    [MenuItem("nanoSDK/Upload", false, 600)]
     static void ShowControlPanel()
     {
         if (!ConfigManager.RemoteConfig.IsInitialized())
@@ -20,7 +20,7 @@ public partial class VRCSdkControlPanel : EditorWindow
         }
 
         window = (VRCSdkControlPanel)EditorWindow.GetWindow(typeof(VRCSdkControlPanel));
-        window.titleContent.text = "VRChat SDK";
+        window.titleContent.text = "Modded SDK";
         window.minSize = new Vector2(SdkWindowWidth + 4, 600);
         window.maxSize = new Vector2(SdkWindowWidth + 4, 2000);
         window.Init();

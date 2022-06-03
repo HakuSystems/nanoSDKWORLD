@@ -11,9 +11,6 @@ public partial class VRCSdkControlPanel : EditorWindow
     static bool signingIn = false;
     static string error = null;
 
-    public static bool FutureProofPublishEnabled { get { return UnityEditor.EditorPrefs.GetBool("futureProofPublish", DefaultFutureProofPublishEnabled); } }
-    //public static bool DefaultFutureProofPublishEnabled { get { return !SDKClientUtilities.IsInternalSDK(); } }
-    public static bool DefaultFutureProofPublishEnabled { get { return false; } }
 
     static string storedUsername
     {

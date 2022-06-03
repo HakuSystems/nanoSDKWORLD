@@ -35,7 +35,7 @@ namespace VRC.Udon.Editor.ProgramSources.UdonGraphProgram.UI.GraphView
         private VisualElement _updateOrderField;
         private IntegerField _updateOrderIntField;
 
-        [MenuItem("VRChat SDK/Udon Graph")]
+        [MenuItem("nanoSDK/Udon Graph", false, 501)]
         private static void ShowWindow()
         {
             // Get or focus the window

@@ -361,7 +361,7 @@ namespace VRCSDK2
                 yield return null;
 
             if (wasError)
-                yield return new WaitUntil(() => UnityEditor.EditorUtility.DisplayDialog("VRChat SDK", "Error saving blueprint.", "Okay"));
+                yield return new WaitUntil(() => UnityEditor.EditorUtility.DisplayDialog("nanoSDK", "Error saving blueprint.", "Okay"));
         }
 
         protected override IEnumerator UpdateBlueprint()

@@ -108,7 +108,7 @@ public class ShaderKeywordsUtility : EditorWindow
     private static bool avatarsDirty = true;
     private int loadedScenes = 0;
 
-    [MenuItem("VRChat SDK/Utilities/Avatar Shader Keywords Utility", false, 990)]
+    //[MenuItem("VRChat SDK/Utilities/Avatar Shader Keywords Utility", false, 990)]
     static void Init()
     {
         ShaderKeywordsUtility window = EditorWindow.GetWindow<ShaderKeywordsUtility>();

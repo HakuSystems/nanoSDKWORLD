@@ -183,7 +183,7 @@ namespace VRC.Udon.Editor
             }
         }
 
-        [MenuItem("VRChat SDK/Utilities/Re-compile All Program Sources")]
+        //[MenuItem("VRChat SDK/Utilities/Re-compile All Program Sources")]
         public static void RecompileAllProgramSources()
         {
             string[] programSourceGUIDs = AssetDatabase.FindAssets("t:AbstractUdonProgramSource");

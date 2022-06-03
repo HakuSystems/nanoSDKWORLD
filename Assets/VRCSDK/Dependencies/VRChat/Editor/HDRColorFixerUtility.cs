@@ -3,14 +3,14 @@ using UnityEngine;
 
 public static class HDRColorFixerUtility
 {
-    [MenuItem("VRChat SDK/Utilities/Convert HDR Material Colors/To Linear", false, 995)]
+    //[MenuItem("VRChat SDK/Utilities/Convert HDR Material Colors/To Linear", false, 995)]
     private static void ConvertToLinear()
     {
         if (!TryConvert())
             EditorUtility.DisplayDialog("Error", "Please select one or more HDR materials to convert.", "OK");
     }
 
-    [MenuItem("VRChat SDK/Utilities/Convert HDR Material Colors/To Gamma", false, 996)]
+    //[MenuItem("VRChat SDK/Utilities/Convert HDR Material Colors/To Gamma", false, 996)]
     private static void ConvertToGamma()
     {
         if (!TryConvert(false))
@@ -52,8 +52,8 @@ public static class HDRColorFixerUtility
         return true;
     }
     
-    [MenuItem("VRChat SDK/Utilities/Convert HDR Material Colors/To Linear", true, 995)]
-    [MenuItem("VRChat SDK/Utilities/Convert HDR Material Colors/To Gamma", true, 996)]
+    //[MenuItem("VRChat SDK/Utilities/Convert HDR Material Colors/To Linear", true, 995)]
+    //[MenuItem("VRChat SDK/Utilities/Convert HDR Material Colors/To Gamma", true, 996)]
     private static bool CheckSelection()
     {
         if (Selection.objects.Length == 0)

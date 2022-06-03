@@ -300,7 +300,7 @@ public class EnvConfig
     }
     #endif
 
-    [MenuItem("VRChat SDK/Utilities/Force Configure Player Settings")]
+    //[MenuItem("VRChat SDK/Utilities/Force Configure Player Settings")]
     public static void ConfigurePlayerSettings()
     {
         VRC.Core.Logger.Log("Setting required PlayerSettings...", VRC.Core.DebugLevel.All);

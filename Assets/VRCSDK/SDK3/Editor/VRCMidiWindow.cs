@@ -22,7 +22,7 @@ namespace VRC.SDK3.Midi
 
         public const string DEVICE_NAME_STRING = "VRC.SDK3.Midi.Device";
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN) && !UNITY_ANDROID
-        [MenuItem("VRChat SDK/Utilities/Midi")]
+        //[MenuItem("VRChat SDK/Utilities/Midi")]
         private static void ShowWindow()
         {
             VRCMidiWindow foo = CreateInstance(typeof(VRCMidiWindow)) as VRCMidiWindow;

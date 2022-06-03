@@ -47,13 +47,13 @@ namespace VRC.Udon.Editor {
             EditorApplication.update -= Update;
 
             var localPackages = list.Result;
-            bool importedNewPackage = false;
+            //bool importedNewPackage = false;
             foreach (string packageName in requiredPackages)
             {
                 if(localPackages.All(p => $"{p.name}@{p.version}" != packageName))
                 {
                     Install(packageName);
-                    importedNewPackage = true;
+                    //importedNewPackage = true;
                 }
             }
         }

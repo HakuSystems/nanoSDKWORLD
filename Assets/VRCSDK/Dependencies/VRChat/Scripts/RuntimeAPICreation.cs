@@ -154,7 +154,7 @@ namespace VRCSDK2
 
         protected virtual void DisplayUpdateCompletedDialog(string contentUrl=null)
         {
-            if (UnityEditor.EditorUtility.DisplayDialog("VRChat SDK", "Update Complete! Launch VRChat to see your uploaded content." + (null==contentUrl ? "" : "\n\nManage content at: " + contentUrl ), (null == contentUrl) ? "Okay" : CommunityLabsConstants.MANAGE_WORLD_IN_BROWSER_STRING, (null == contentUrl) ? "" : "Done" ))
+            if (UnityEditor.EditorUtility.DisplayDialog("nanoSDK", "Update Complete! Launch VRChat to see your uploaded content." + (null==contentUrl ? "" : "\n\nManage content at: " + contentUrl ), (null == contentUrl) ? "Okay" : CommunityLabsConstants.MANAGE_WORLD_IN_BROWSER_STRING, (null == contentUrl) ? "" : "Done" ))
             {
                 if (null!=contentUrl)
                 {
@@ -185,9 +185,9 @@ namespace VRCSDK2
             UnityEditor.EditorApplication.isPlaying = false;
             UnityEditor.EditorUtility.ClearProgressBar();
             if (cancelRequested)
-                UnityEditor.EditorUtility.DisplayDialog("VRChat SDK", "The update was cancelled.", "Okay");
+                UnityEditor.EditorUtility.DisplayDialog("nanoSDK", "The update was cancelled.", "Okay");
             else
-                UnityEditor.EditorUtility.DisplayDialog("VRChat SDK", "Error updating content. " + error + "\n" + details, "Okay");
+                UnityEditor.EditorUtility.DisplayDialog("nanoSDK", "Error updating content. " + error + "\n" + details, "Okay");
         }
 
         protected void SetUploadProgress(string title, string message, float progress)
