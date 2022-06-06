@@ -107,13 +107,7 @@ namespace nanoSDK
             {
                 InitializeData();
             }
-            if (NanoUpdater.ServerVersionList == null || NanoUpdater.LatestVersion == null || NanoUpdater.LatestBetaVersion == null)
-            {
-                EditorGUILayout.BeginVertical();
-                EditorGUILayout.LabelField("Loading...");
-                EditorGUILayout.EndVertical();
-                return;
-            }
+            
             GUILayout.BeginHorizontal();
             GUI.Box(new Rect(920, -20, 300, 0), "", nanoSdkHeader);
             GUILayout.EndHorizontal();
