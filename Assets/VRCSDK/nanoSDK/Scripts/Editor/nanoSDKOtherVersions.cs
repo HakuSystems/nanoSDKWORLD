@@ -51,14 +51,14 @@ namespace nanoSDK
                     {
                         if (EditorUtility.DisplayDialog("Download Beta Version", "Are you sure you want to download the beta version? This will overwrite your current version.", "Yes", "No"))
                         {
-                            NanoSDK_AutomaticUpdateAndInstall.DeleteAndDownloadAsync(version.Version);
+                            NanoUpdater.DeleteAndDownloadAsync(version.Version);
                         }
                     }
                     else
                     {
                         if (EditorUtility.DisplayDialog("Download Stable Version", "Are you sure you want to download the stable version? This will overwrite your current version.", "Yes", "No"))
                         {
-                            NanoSDK_AutomaticUpdateAndInstall.DeleteAndDownloadAsync(version.Version);
+                            NanoUpdater.DeleteAndDownloadAsync(version.Version);
                         }
                     }
                 }
@@ -75,7 +75,7 @@ namespace nanoSDK
                 string version = split[0];
                 string type = split[1];
                 string branch = split[2];
-                NanoSDK_AutomaticUpdateAndInstall.DeleteAndDownloadAsync(version);
+                NanoUpdater.DeleteAndDownloadAsync(version);
             }
             GUILayout.EndHorizontal();
         }
@@ -85,7 +85,7 @@ namespace nanoSDK
         {
             if (!runOnce)
             {
-                versionList = await NanoSDK_AutomaticUpdateAndInstall.GetVersionList();
+                versionList = await NanoUpdater.GetVersionList();
                 runOnce = true;
             }
             if (File.Exists($"Assets{Path.DirectorySeparatorChar}VRCSDK{Path.DirectorySeparatorChar}version.txt"))

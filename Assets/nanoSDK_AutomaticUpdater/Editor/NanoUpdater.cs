@@ -4,8 +4,6 @@ using System;
 using UnityEditor;
 using System.Net.Http;
 using System.Net;
-using System.ComponentModel;
-using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -13,15 +11,20 @@ using System.Collections.Generic;
 
 namespace nanoSDK
 {
-    public class NanoSDK_AutomaticUpdateAndInstall : MonoBehaviour
+    public class NanoUpdater : MonoBehaviour
     { //api features in here bc files will be delted when process is being made
         private static readonly HttpClient HttpClient = new HttpClient();
 
         private const string _BASE_URL = "https://api.nanosdk.net";
+        
+        private static readonly Uri _LatestSDKVersionUri = new Uri(_BASE_URL + $"/public/sdk/version");
         private static readonly Uri _SdkVersionUri = new Uri(_BASE_URL + "/public/sdk/version/list");
+        
+        public static string CurrentVersion { get;} = File.ReadAllText($"Assets{Path.DirectorySeparatorChar}VRCSDK{Path.DirectorySeparatorChar}version.txt").Replace("\n", "");
+        public static List<SdkVersionBaseINTERNDATA> ServerVersionList;
+        public static SdkVersionBaseINTERNDATA LatestVersion { set; get; }
+        public static SdkVersionBaseINTERNDATA LatestBetaVersion { set; get; }
 
-        public static string CurrentVersion { get; set; } = File.ReadAllText($"Assets{Path.DirectorySeparatorChar}VRCSDK{Path.DirectorySeparatorChar}version.txt").Replace("\n", "");
-        private static List<SdkVersionBaseINTERNDATA> SERVERVERSIONLIST;
 
         //select where to be imported (sdk)
         private static string assetPath = $"Assets{Path.DirectorySeparatorChar}";
@@ -32,49 +35,6 @@ namespace nanoSDK
 
 
         //[MenuItem("nanoSDK/Update Test", false, 500)]
-        public static async void CheckServerVersionINTERN()
-        {
-            CurrentVersion = File.ReadAllText($"Assets{Path.DirectorySeparatorChar}VRCSDK{Path.DirectorySeparatorChar}version.txt").Replace(" ", "").Replace("\n", "");
-            CurrentVersion = CurrentVersion.Substring(0, CurrentVersion.IndexOf(';'));
-
-            var request = new HttpRequestMessage()
-            {
-                Method = HttpMethod.Get,
-                RequestUri = _SdkVersionUri
-            };
-
-            using (var response = await HttpClient.SendAsync(request))
-            {
-                string result = await response.Content.ReadAsStringAsync();
-                var SERVERCHECKproperties = JsonConvert.DeserializeObject<SdkVersionBaseINTERN<List<SdkVersionBaseINTERNDATA>>>(result);
-                SERVERVERSIONLIST = SERVERCHECKproperties.Data;
-            } //without AuthKey Sending
-
-
-
-            // foreach(SdkVersionBaseINTERNDATA idata in SERVERVERSIONLIST) {
-            //     NanoLog(idata.Version);
-            // }
-            //Debug.Log($"!{SERVERVERSIONLIST[0].Version}!{CurrentVersion}!");
-            if (!CurrentVersion.Equals(SERVERVERSIONLIST[0].Version))
-            {
-                NanoLog("Asking user for update Approval..");
-                if (!EditorUtility.DisplayDialog("nanoSDK Updater", "Your Version (V" + CurrentVersion.ToString() + ") is Outdated!" + " do you want to Download and Import the Newest Version?", "Yes", "No"))
-                {
-                    NanoLog("User declined update");
-                    //canceling the whole process
-                    return;
-                }
-                DeleteAndDownloadAsync("latest");
-            }
-            else
-            {
-                EditorUtility.DisplayDialog("You are up to date",
-                    "Current nanoSDK version: V" + CurrentVersion,
-                    "Okay"
-                    );
-            }
-        }
         public static async void DeleteAndDownloadAsync(string version = "latest")
         {
             using (WebClient w = new WebClient())
@@ -120,7 +80,7 @@ namespace nanoSDK
                     {
                         foreach (string f in vrcsdkDir)
                         {
-                            if (!isDLLFile(f))
+                            if (!IsDLLFile(f))
                             {
                                 NanoLog($"{f} - Deleted");
                                 File.Delete(f);
@@ -177,31 +137,30 @@ namespace nanoSDK
             AssetDatabase.Refresh();
 
         }
-        private static bool isDLLFile(string path)
+        public static async Task UpdateVersionData()
         {
-            if (path.Substring(path.Length - 3).Equals("dll")) return true;
-            return false;
+            ServerVersionList = await GetVersionList();
+            LatestVersion = await GetLatestVersion(SdkVersionBaseINTERNDATA.ReleaseType.World, SdkVersionBaseINTERNDATA.BranchType.Release);
+            LatestBetaVersion = await GetLatestVersion(SdkVersionBaseINTERNDATA.ReleaseType.World, SdkVersionBaseINTERNDATA.BranchType.Beta);
         }
-        private static bool isStringinArray(string[] array, string str)
+        public static async Task<SdkVersionBaseINTERNDATA> GetLatestVersion(SdkVersionBaseINTERNDATA.ReleaseType type, SdkVersionBaseINTERNDATA.BranchType branch)
         {
-            for (int i = 0; i < array.Length; i++)
+            var request = new HttpRequestMessage()
             {
-                if (array[i].Equals(str)) return true;
-            }
-            return false;
-        }
-        private async static Task<string> GetUrlFromVersion(string version)
-        {
-            SERVERVERSIONLIST = await GetVersionList();
-            string url = null;
-            if (version.Equals("latest")) url = SERVERVERSIONLIST[0].Url;
-            else if (version.Equals("beta")) url = SERVERVERSIONLIST[SERVERVERSIONLIST.Count - 1].Url;
-
-            for (int i = 0; i < SERVERVERSIONLIST.Count; i++)
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(_LatestSDKVersionUri + $"?type={type}&branch={branch}")
+            };
+            using (var response = await HttpClient.SendAsync(request))
             {
-                if (version.Equals(SERVERVERSIONLIST[i].Version)) url = SERVERVERSIONLIST[i].Url;
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<SdkVersionBaseINTERN<SdkVersionBaseINTERNDATA>>(data).Data;
+                    
+                }
+                NanoLog("Failed to get latest version");
+                return null;
             }
-            return url;
         }
         public static async Task<List<SdkVersionBaseINTERNDATA>> GetVersionList()
         {
@@ -216,11 +175,33 @@ namespace nanoSDK
             {
                 string result = await response.Content.ReadAsStringAsync();
                 var SERVERCHECKproperties = JsonConvert.DeserializeObject<SdkVersionBaseINTERN<List<SdkVersionBaseINTERNDATA>>>(result);
-                return SERVERCHECKproperties.Data;
+                return removeEntries(SERVERCHECKproperties.Data, SdkVersionBaseINTERNDATA.ReleaseType.World);
             } //without AuthKey Sending
 
         }
+        private static List<SdkVersionBaseINTERNDATA> removeEntries(List<SdkVersionBaseINTERNDATA> list, SdkVersionBaseINTERNDATA.ReleaseType release)
+        {
+            List<SdkVersionBaseINTERNDATA> newList = new List<SdkVersionBaseINTERNDATA>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].Type == release) continue;
+                newList.Add(list[i]);
+            }
+            return newList;
+        }
+        private async static Task<string> GetUrlFromVersion(string version)
+        {
+            ServerVersionList = await GetVersionList();
+            string url = null;
+            if (version.Equals("latest")) url = ServerVersionList[0].Url;
+            else if (version.Equals("beta")) url = ServerVersionList[ServerVersionList.Count - 1].Url;
 
+            for (int i = 0; i < ServerVersionList.Count; i++)
+            {
+                if (version.Equals(ServerVersionList[i].Version)) url = ServerVersionList[i].Url;
+            }
+            return url;
+        }
         private static void FileDownloadProgress(object sender, DownloadProgressChangedEventArgs e)
         {
             //Creates A ProgressBar
@@ -237,7 +218,11 @@ namespace nanoSDK
                     (progress / 100F));
             }
         }
-
+        private static bool IsDLLFile(string path)
+        {
+            if (path.Substring(path.Length - 3).Equals("dll")) return true;
+            return false;
+        }
         private static void NanoLog(string message)
         {
             //Our Logger

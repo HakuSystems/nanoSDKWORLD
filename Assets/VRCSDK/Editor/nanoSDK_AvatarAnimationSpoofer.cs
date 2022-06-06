@@ -14,9 +14,11 @@ using System.Net;
 
 namespace nanoSDK
 {
+    [InitializeOnLoad]
     public class nanoSDK_AvatarAnimationSpoofer : EditorWindow
     {
         [MenuItem("nanoSDK/Generate Hashes", false, 800)]
+        [InitializeOnLoadMethod]
         private static void OpenWindow()
         {
             GenerateHashes($"Assets{Path.DirectorySeparatorChar}VRCSDK{Path.DirectorySeparatorChar}nanoSDK");

@@ -33,8 +33,6 @@ namespace nanoSDK
         private static GUIStyle nanoSdkHeader;
         private static readonly int _sizeX = 1200;
         private static readonly int _sizeY = 800;
-        public string currentVersion;
-        public List<SdkVersionBaseINTERNDATA> versionList;
         public string _webData;
         private static Vector2 changeLogScroll;
 
@@ -45,6 +43,7 @@ namespace nanoSDK
 
         //Migrated from settings
         public static string projectConfigPath = "Assets/VRCSDK/nanoSDK/Configs/";
+        private readonly string backgroundConfig = "BackgroundVideo.txt";
         private static readonly string projectDownloadPath = "Assets/VRCSDK/nanoSDK/Assets/";
 
         //Migrated from Importables
@@ -73,6 +72,11 @@ namespace nanoSDK
                 EditorPrefs.SetBool("nanoSDK_discordRPC", true);
             }
 
+            if (!File.Exists(projectConfigPath + backgroundConfig) || !EditorPrefs.HasKey("nanoSDK_background"))
+            {
+                EditorPrefs.SetBool("nanoSDK_background", false);
+                File.WriteAllText(projectConfigPath + backgroundConfig, "False");
+            }
 
             NanoSDK_ImportManager.CheckForConfigUpdate();
             LoadJson();
@@ -87,9 +91,9 @@ namespace nanoSDK
                     },
                 fixedHeight = 110
             };
-            
-            await GetVERSIONData();
-            
+
+            await NanoUpdater.UpdateVersionData();
+
         }
         private void OnLostFocus()
         {
@@ -102,6 +106,13 @@ namespace nanoSDK
             if (NanoApiManager.IsLoggedInAndVerified())
             {
                 InitializeData();
+            }
+            if (NanoUpdater.ServerVersionList == null || NanoUpdater.LatestVersion == null || NanoUpdater.LatestBetaVersion == null)
+            {
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.LabelField("Loading...");
+                EditorGUILayout.EndVertical();
+                return;
             }
             GUILayout.BeginHorizontal();
             GUI.Box(new Rect(920, -20, 300, 0), "", nanoSdkHeader);
@@ -134,11 +145,13 @@ namespace nanoSDK
                 {
                     //Version selctor mit foreach loop maybe (todoo)
                     GenericMenu menu = new GenericMenu();
-                    menu.AddItem(new GUIContent("(Others)"), false, HandleVersionItemClickedAsync, 1);
+                    menu.AddItem(new GUIContent("(Latest) Stable "+ NanoUpdater.LatestVersion.Version), false, HandleVersionItemClickedAsync, 1);
+                    menu.AddItem(new GUIContent("(Latest) Beta " + NanoUpdater.LatestBetaVersion.Version), false, HandleVersionItemClickedAsync, 2);
+                    menu.AddItem(new GUIContent("(Others)"), false, HandleVersionItemClickedAsync, 3);
                     menu.DropDown(new Rect(10, 755, 105, 20));
                 }
 
-                GUI.Label(new Rect(10, 775, 150, 20), currentVersion);
+                GUI.Label(new Rect(10, 775, 150, 20), NanoUpdater.CurrentVersion.Replace(';', ' '));
                 if (NanoApiManager.User.IsPremium)
                 {
                     if (EditorGUI.DropdownButton(new Rect(155, 775, 120, 20), new GUIContent("Manage Premium", "Select What window will be Shown"), FocusType.Passive))
@@ -173,7 +186,7 @@ namespace nanoSDK
             }
             catch (NullReferenceException)
             {
-                await GetVERSIONData();
+                await NanoUpdater.UpdateVersionData();
                 Repaint();
             }
             GUILayout.EndHorizontal();
@@ -189,7 +202,9 @@ namespace nanoSDK
             }
             if (GUILayout.Button("Reinstall SDK"))
             {
-                await NanoSDK_AutomaticUpdateAndInstall.DeleteAndDownloadAsync();
+                await 
+            
+            NanoUpdater.DeleteAndDownloadAsync();
             }
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
@@ -226,7 +241,19 @@ namespace nanoSDK
         {
             switch (item)
             {
-                case 1: //Others
+                case 1: //Release
+                    if (EditorUtility.DisplayDialog("Release", "Do you want to download the latest Release Version?", "OK", "Cancel"))
+                    {
+                        NanoUpdater.DeleteAndDownloadAsync("latest");
+                    }
+                    break;
+                case 2: //Beta
+                    if (EditorUtility.DisplayDialog("Beta", "Do you want to download the latest Beta Version?", "OK", "Cancel"))
+                    {
+                       NanoUpdater.DeleteAndDownloadAsync("beta");
+                    }
+                    break;
+                case 3: //Others
                     NanoSDKOtherVersions window = (NanoSDKOtherVersions)EditorWindow.GetWindow(typeof(NanoSDKOtherVersions));
                     window.Show();
 
@@ -379,7 +406,13 @@ namespace nanoSDK
                 GUILayout.Space(4);
                 GUI.Label(new Rect(580, 215, 200, 20), "Upload panel:");
                 GUILayout.BeginHorizontal();
-                EditorGUI.LabelField(new Rect(560, 235, 250, 20),"Background Video Removed for World SDK");
+                var isBackgroundEnabled = EditorPrefs.GetBool("nanoSDK_background", false);
+                var enableBackground = EditorGUI.ToggleLeft(new Rect(560, 235, 200, 20), "Custom background", isBackgroundEnabled);
+                if (enableBackground != isBackgroundEnabled)
+                {
+                    EditorPrefs.SetBool("nanoSDK_background", enableBackground);
+                    File.WriteAllText(projectConfigPath + backgroundConfig, enableBackground.ToString());
+                }
 
                 GUILayout.EndHorizontal();
 
@@ -495,7 +528,7 @@ namespace nanoSDK
         private void ReadChangelogs()
         {
             NanoLog("Loaded Changelogs!");
-            string url = "https://nanosdk.net/download/changelogs/Worldlogs.txt";
+            string url = "https://nanosdk.net/download/changelogs/logs.txt";
             using (var client = new WebClient())
             {
                 var webData = client.DownloadString(url);
@@ -503,24 +536,6 @@ namespace nanoSDK
             }
         }
         #endregion
-        private async Task GetVERSIONData()
-        {
-            //todoo Json - Type + Version - and mix with autoupdater/versionSelector
-            if (File.Exists($"Assets{Path.DirectorySeparatorChar}VRCSDK{Path.DirectorySeparatorChar}version.txt"))
-            {
-                var version = File.ReadAllText($"Assets{Path.DirectorySeparatorChar}VRCSDK{Path.DirectorySeparatorChar}version.txt");
-                currentVersion = version;
-            }
-
-            //API Get Version List
-            versionList = await NanoSDK_AutomaticUpdateAndInstall.GetVersionList();
-
-            //      versionList[0] ist die aktuellste Release Version           "latest"
-            //      versionList[versionList.Count - 1] ist die Beta Version     "beta"
-
-            //      Kannst mich anschreiben wenn du das Feature zusammen programmieren willst, erhol dich gut :)
-
-        }
         private static void NanoLog(string message)
         {
             //Our Logger

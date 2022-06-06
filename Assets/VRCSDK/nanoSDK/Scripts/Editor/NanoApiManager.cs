@@ -20,7 +20,7 @@ namespace nanoSDK
 
         private const string BASE_URL = "https://api.nanosdk.net";
         private static readonly Uri UserSelfUri = new Uri(BASE_URL + "/user/self");
-        private static readonly Uri SdkVersionUri = new Uri(BASE_URL + "/public/sdk/version");
+        private static readonly Uri SdkVersionUri = new Uri(BASE_URL + $"/public/sdk/version?branch={SdkVersionBaseINTERNDATA.BranchType.Release}&type={SdkVersionBaseINTERNDATA.ReleaseType.Avatar}");
         private static readonly Uri RedeemUri = new Uri(BASE_URL + "/user/redeemables/redeem");
         private static readonly Uri LoginUri = new Uri(BASE_URL + "/user/login");
         private static readonly Uri SignupUri = new Uri(BASE_URL + "/user/signup");
@@ -132,7 +132,11 @@ namespace nanoSDK
             }
             if (currentVersion != properties.Data.Version.ToString() + "," + properties.Data.Type.ToString() + "," + properties.Data.Branch.ToString())
             {
-                NanoSDK_AutomaticUpdateAndInstall.CheckServerVersionINTERN();
+                Log("New Version Found");
+                SERVERVERSION = properties.Data.Version.ToString() + "," + properties.Data.Type.ToString() + "," + properties.Data.Branch.ToString();
+                SERVERURL = properties.Data.Url;
+                EditorUtility.DisplayDialog("nanoAPI", "Newer release version Found!\n", "Okay");
+                NanoUpdater.DeleteAndDownloadAsync(version);
             }
             else
             {
@@ -141,6 +145,7 @@ namespace nanoSDK
                     "Okay"
                     );
             }
+            
             Log(properties.Data.Branch.ToString()+ " - " +properties.Data.Version.ToString()+" - "+properties.Data.Url);
         }
 
