@@ -175,7 +175,7 @@ namespace nanoSDK
             {
                 string result = await response.Content.ReadAsStringAsync();
                 var SERVERCHECKproperties = JsonConvert.DeserializeObject<SdkVersionBaseINTERN<List<SdkVersionBaseINTERNDATA>>>(result);
-                return removeEntries(SERVERCHECKproperties.Data, SdkVersionBaseINTERNDATA.ReleaseType.World);
+                return removeEntries(SERVERCHECKproperties.Data, SdkVersionBaseINTERNDATA.ReleaseType.Avatar);
             } //without AuthKey Sending
 
         }
