@@ -524,7 +524,7 @@ namespace nanoSDK
         private void ReadChangelogs()
         {
             NanoLog("Loaded Changelogs!");
-            string url = "https://nanosdk.net/download/changelogs/logs.txt";
+            string url = "https://nanosdk.net/download/changelogs/Worldlogs.txt";
             using (var client = new WebClient())
             {
                 var webData = client.DownloadString(url);
