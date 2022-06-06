@@ -137,12 +137,14 @@ namespace nanoSDK
             {
                 if (EditorGUI.DropdownButton(new Rect(10, 755, 105, 20), new GUIContent("Switch Version", "Want to Downgrade?"), FocusType.Passive))
                 {
-                    //Version selctor mit foreach loop maybe (todoo)
+                    EditorUtility.DisplayDialog("nanoSDK", "Since this is the First World SDK, there is no other Version for world.", "OK");
+                    /*
                     GenericMenu menu = new GenericMenu();
                     menu.AddItem(new GUIContent("(Latest) Stable "+ NanoUpdater.LatestVersion.Version), false, HandleVersionItemClickedAsync, 1);
                     menu.AddItem(new GUIContent("(Latest) Beta " + NanoUpdater.LatestBetaVersion.Version), false, HandleVersionItemClickedAsync, 2);
                     menu.AddItem(new GUIContent("(Others)"), false, HandleVersionItemClickedAsync, 3);
                     menu.DropDown(new Rect(10, 755, 105, 20));
+                    */
                 }
 
                 GUI.Label(new Rect(10, 775, 150, 20), NanoUpdater.CurrentVersion.Replace(';', ' '));
